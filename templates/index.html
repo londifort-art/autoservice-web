@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ t.meta_title }}</title>
+    <meta name="description" content="{{ t.meta_description }}">
+    <meta name="keywords" content="{{ t.meta_keywords }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            black: '#121212',
+                            dark: '#1a1a1a',
+                            light: '#f8f9fa',
+                            accent: '#c5a059'
+                        }
+                    },
+                    keyframes: {
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-4px)' },
+                            '20%, 40%, 60%, 80%': { transform: 'translateX(4px)' },
+                        }
+                    },
+                    animation: {
+                        shake: 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Analytics (Placeholder) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
+    <!-- Meta Pixel (Placeholder) -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'XXXXXXXXXXXXXXX');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=XXXXXXXXXXXXXXX&ev=PageView&noscript=1"
+    /></noscript>
+
+    <style>
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .form-input {
+            width: 100%;
+            border-bottom: 1px solid #d1d5db;
+            background: transparent;
+            padding: 12px 0;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-bottom-color: #c5a059;
+        }
+        
+        .lang-switch a {
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .lang-switch a.active {
+            background-color: #c5a059;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-light text-brand-dark font-sans antialiased">
+
+    <nav class="fixed w-full z-50 bg-brand-light/90 backdrop-blur-md border-b border-gray-200 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center relative z-50">
+            <a href="#" class="font-heading font-bold text-2xl tracking-tighter text-brand-black uppercase z-50">
+                Auto Šuks<span class="text-brand-accent">.</span>
+            </a>
+            <div class="hidden md:flex space-x-8 text-sm font-medium tracking-wide">
+                <a href="#services" class="hover:text-brand-accent transition-colors">{{ t.nav_services }}</a>
+                <a href="#about" class="hover:text-brand-accent transition-colors">{{ t.nav_about }}</a>
+                <a href="#reviews" class="hover:text-brand-accent transition-colors">{{ t.nav_reviews }}</a>
+            </div>
+            
+            <div class="flex items-center space-x-4 z-50">
+                <div class="lang-switch text-sm font-medium flex space-x-2">
+                    <a href="/ru" class="{% if lang == 'ru' %}active{% endif %}">RU</a>
+                    <a href="/lv" class="{% if lang == 'lv' %}active{% endif %}">LV</a>
+                    <a href="/en" class="{% if lang == 'en' %}active{% endif %}">EN</a>
+                </div>
+                <a href="#contact"
+                    class="hidden md:inline-block bg-brand-black text-white px-6 py-2.5 text-sm font-medium hover:bg-brand-accent transition-colors rounded-sm">
+                    {{ t.nav_book }}
+                </a>
+
+                <!-- Hamburger Icon -->
+                <button id="mobile-menu-btn" class="md:hidden text-brand-black focus:outline-none p-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Backdrop -->
+    <div id="mobile-menu-backdrop" class="fixed inset-0 bg-black/60 z-[60] hidden transition-opacity duration-300 opacity-0 md:hidden"></div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed top-0 right-0 h-[100dvh] w-64 bg-brand-dark shadow-2xl z-[70] transform translate-x-full transition-transform duration-300 md:hidden flex flex-col pt-20 px-8 space-y-6 text-lg font-heading font-medium">
+        
+        <!-- Close Button -->
+        <button id="mobile-close-btn" class="absolute top-5 right-6 text-gray-400 hover:text-white focus:outline-none p-2 transition-colors">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <a href="#services" class="mobile-link text-white hover:text-brand-accent transition-colors">{{ t.nav_services }}</a>
+        <a href="#about" class="mobile-link text-white hover:text-brand-accent transition-colors">{{ t.nav_about }}</a>
+        <a href="#reviews" class="mobile-link text-white hover:text-brand-accent transition-colors">{{ t.nav_reviews }}</a>
+        <div class="h-px w-full bg-gray-800 my-4"></div>
+        <a href="#contact" class="mobile-link bg-brand-accent text-white text-center px-4 py-3 text-sm tracking-widest hover:bg-white hover:text-brand-black transition-colors rounded-sm uppercase mt-4">
+            {{ t.nav_book }}
+        </a>
+    </div>
+
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-brand-black/75 z-10"></div>
+            <img src="https://images.unsplash.com/photo-1611016186353-9af58c69a533?q=80&w=1920&auto=format&fit=crop"
+                alt="Auto Šuks Service" class="w-full h-full object-cover" />
+        </div>
+
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto reveal active">
+            <h1 class="font-heading text-5xl md:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
+                {{ t.hero_title_1 }} <br><span class="text-brand-accent">{{ t.hero_title_2 }}</span>
+            </h1>
+            <p class="text-gray-300 text-lg md:text-xl font-light mb-10 max-w-2xl mx-auto">
+                {{ t.hero_subtitle }}
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="#contact"
+                    class="w-full sm:w-auto bg-brand-accent text-white px-8 py-4 text-sm tracking-widest uppercase font-medium hover:bg-white hover:text-brand-black transition-all duration-300 rounded-sm">
+                    {{ t.hero_btn_online }}
+                </a>
+                <a href="tel:+37125658546"
+                    class="w-full sm:w-auto border border-white text-white px-8 py-4 text-sm tracking-widest uppercase font-medium hover:bg-white hover:text-brand-black transition-all duration-300 rounded-sm">
+                    {{ t.hero_btn_call }}
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-heading text-3xl md:text-4xl font-bold text-brand-black mb-4">{{ t.services_title }}</h2>
+                <div class="w-16 h-1 bg-brand-accent mx-auto mb-6"></div>
+                <p class="text-gray-500 max-w-2xl mx-auto font-light">{{ t.services_subtitle }}</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1: Diagnostics -->
+                <div class="reveal group bg-[#f8f9fa] p-8 rounded-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div class="w-12 h-12 bg-white flex items-center justify-center rounded-full mb-6 text-brand-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-3 text-brand-black">{{ t.service_1_title }}</h3>
+                    <p class="text-gray-600 font-light text-sm leading-relaxed">{{ t.service_1_desc }}</p>
+                </div>
+
+                <!-- Service 2: Engine -->
+                <div class="reveal group bg-[#f8f9fa] p-8 rounded-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" style="transition-delay: 100ms;">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div class="w-12 h-12 bg-white flex items-center justify-center rounded-full mb-6 text-brand-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-3 text-brand-black">{{ t.service_2_title }}</h3>
+                    <p class="text-gray-600 font-light text-sm leading-relaxed">{{ t.service_2_desc }}</p>
+                </div>
+
+                <!-- Service 3: Brakes -->
+                <div class="reveal group bg-[#f8f9fa] p-8 rounded-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" style="transition-delay: 200ms;">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div class="w-12 h-12 bg-white flex items-center justify-center rounded-full mb-6 text-brand-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-3 text-brand-black">{{ t.service_3_title }}</h3>
+                    <p class="text-gray-600 font-light text-sm leading-relaxed">{{ t.service_3_desc }}</p>
+                </div>
+
+                <!-- Service 4: Electrical -->
+                <div class="reveal group bg-[#f8f9fa] p-8 rounded-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div class="w-12 h-12 bg-white flex items-center justify-center rounded-full mb-6 text-brand-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-3 text-brand-black">{{ t.service_4_title }}</h3>
+                    <p class="text-gray-600 font-light text-sm leading-relaxed">{{ t.service_4_desc }}</p>
+                </div>
+
+                <!-- Service 5: Tires -->
+                <div class="reveal group bg-[#f8f9fa] p-8 rounded-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" style="transition-delay: 100ms;">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div class="w-12 h-12 bg-white flex items-center justify-center rounded-full mb-6 text-brand-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-3 text-brand-black">{{ t.service_5_title }}</h3>
+                    <p class="text-gray-600 font-light text-sm leading-relaxed">{{ t.service_5_desc }}</p>
+                </div>
+
+                <!-- Service 6: Maintenance -->
+                <div class="reveal group bg-[#f8f9fa] p-8 rounded-sm border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden" style="transition-delay: 200ms;">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-accent transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
+                    <div class="w-12 h-12 bg-white flex items-center justify-center rounded-full mb-6 text-brand-accent shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-3 text-brand-black">{{ t.service_6_title }}</h3>
+                    <p class="text-gray-600 font-light text-sm leading-relaxed">{{ t.service_6_desc }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 bg-brand-light">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+            <div class="reveal">
+                <img src="https://images.unsplash.com/photo-1625047509168-a7026f36de04?q=80&w=1000&auto=format&fit=crop"
+                    alt="Auto Šuks Мастерская"
+                    class="rounded-sm shadow-2xl grayscale hover:grayscale-0 transition-all duration-700">
+            </div>
+            <div class="reveal">
+                <h2 class="font-heading text-3xl md:text-4xl font-bold text-brand-black mb-6">{{ t.about_title }}</h2>
+                <p class="text-gray-600 font-light leading-relaxed mb-6">{{ t.about_p1 }}</p>
+                <p class="text-gray-600 font-light leading-relaxed mb-8">{{ t.about_p2 }}</p>
+                <div class="flex items-center space-x-12 border-l-2 border-brand-accent pl-6">
+                    <div>
+                        <div class="text-3xl font-heading font-bold text-brand-black flex items-center">4.6 <span
+                                class="text-brand-accent ml-1 text-xl">★</span></div>
+                        <div class="text-xs tracking-widest text-gray-500 uppercase mt-1">{{ t.about_stat_1 }}</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-heading font-bold text-brand-black">64+</div>
+                        <div class="text-xs tracking-widest text-gray-500 uppercase mt-1">{{ t.about_stat_2 }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews" class="py-24 bg-brand-black text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-heading text-3xl md:text-4xl font-bold mb-4">{{ t.reviews_title }}</h2>
+                <div class="w-16 h-1 bg-brand-accent mx-auto"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-[#1a1a1a] p-8 rounded-sm reveal border border-gray-800">
+                    <div class="flex text-brand-accent mb-4 text-xl">★★★★★</div>
+                    <p class="text-gray-300 font-light italic mb-6 text-sm leading-relaxed">
+                        {{ t.review_1_text }}
+                    </p>
+                    <div class="font-heading font-bold text-sm tracking-wide">Viktoria Demenchuk</div>
+                </div>
+                <div class="bg-[#1a1a1a] p-8 rounded-sm reveal border border-gray-800" style="transition-delay: 100ms;">
+                    <div class="flex text-brand-accent mb-4 text-xl">★★★★★</div>
+                    <p class="text-gray-300 font-light italic mb-6 text-sm leading-relaxed">
+                        {{ t.review_2_text }}
+                    </p>
+                    <div class="font-heading font-bold text-sm tracking-wide">Jurijs Rutko</div>
+                </div>
+                <div class="bg-[#1a1a1a] p-8 rounded-sm reveal border border-gray-800" style="transition-delay: 200ms;">
+                    <div class="flex text-brand-accent mb-4 text-xl">★★★★★</div>
+                    <p class="text-gray-300 font-light italic mb-6 text-sm leading-relaxed">
+                        {{ t.review_3_text }}
+                    </p>
+                    <div class="font-heading font-bold text-sm tracking-wide">Tinki Show</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <div class="reveal">
+                <h2 class="font-heading text-3xl font-bold text-brand-black mb-2">{{ t.contact_title }}</h2>
+                <p class="text-gray-500 font-light mb-10 text-sm">{{ t.contact_subtitle }}</p>
+
+                <form id="wa-form" class="space-y-6" novalidate>
+                    <input type="hidden" id="wa-template" value="{{ t.wa_template }}">
+                    <div>
+                        <input type="text" id="wa-name" placeholder="{{ t.contact_name }}" class="form-input transition-colors duration-300" required>
+                    </div>
+                    <div>
+                        <input type="tel" id="wa-phone" placeholder="{{ t.contact_phone }}" class="form-input transition-colors duration-300" required>
+                    </div>
+                    <div>
+                        <select id="wa-service" class="form-input text-gray-500 transition-colors duration-300" required>
+                            <option value="" disabled selected>{{ t.contact_select_default }}</option>
+                            <option value="{{ t.contact_opt_1 }}">{{ t.contact_opt_1 }}</option>
+                            <option value="{{ t.contact_opt_2 }}">{{ t.contact_opt_2 }}</option>
+                            <option value="{{ t.contact_opt_3 }}">{{ t.contact_opt_3 }}</option>
+                            <option value="{{ t.contact_opt_4 }}">{{ t.contact_opt_4 }}</option>
+                            <option value="{{ t.contact_opt_5 }}">{{ t.contact_opt_5 }}</option>
+                        </select>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-[#25D366] text-white py-4 font-bold tracking-wide hover:bg-[#128C7E] transition-colors rounded-sm mt-4 text-sm uppercase flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="mr-2" viewBox="0 0 16 16">
+                            <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                        </svg>
+                        {{ t.contact_btn }}
+                    </button>
+                </form>
+            </div>
+
+            <div class="reveal flex flex-col rounded-sm overflow-hidden shadow-lg h-full">
+                <div class="bg-brand-light p-10 flex-grow relative">
+                    <div class="absolute -right-10 -bottom-10 opacity-5 pointer-events-none">
+                        <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M19.15 8a2 2 0 0 0-1.72-1H15V5a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v10a2 2 0 0 0 1 1.73 3.49 3.49 0 0 0 7 .27h3.1a3.48 3.48 0 0 0 6.9 0 2 2 0 0 0 2-2v-3a1.07 1.07 0 0 0-.14-.52zM7.5 18A1.5 1.5 0 1 1 9 16.5 1.5 1.5 0 0 1 7.5 18zm11 0a1.5 1.5 0 1 1 1.5-1.5 1.5 1.5 0 0 1-1.5 1.5z" />
+                        </svg>
+                    </div>
+
+                    <h3 class="font-heading text-2xl font-bold mb-8 z-10 relative">{{ t.contacts_title }}</h3>
+
+                    <div class="space-y-6 z-10 relative">
+                        <div class="flex items-start">
+                            <div class="text-brand-accent font-bold w-28 text-sm uppercase tracking-wider">{{ t.contacts_addr_label }}</div>
+                            <div class="text-gray-600 font-light text-sm leading-relaxed">Ganību dambis 30N<br>Sarkandaugava, 1005 Rīga</div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="text-brand-accent font-bold w-28 text-sm uppercase tracking-wider">{{ t.contacts_phone_label }}</div>
+                            <a href="tel:+37125658546"
+                                class="text-gray-600 font-light hover:text-brand-accent transition-colors text-lg">+371 25 658 546</a>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="text-brand-accent font-bold w-28 text-sm uppercase tracking-wider">{{ t.contacts_hours_label }}</div>
+                            <div class="text-gray-600 font-light text-sm leading-relaxed">
+                                {{ t.contacts_hours_text_1 }}<br>
+                                {{ t.contacts_hours_text_2 }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Google Maps Embed -->
+                <div class="h-72 w-full bg-gray-200 relative group">
+                    <iframe 
+                        width="100%" 
+                        height="100%" 
+                        frameborder="0" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="https://maps.google.com/maps?q=Ganību%20dambis%2030N,%20Rīga&t=&z=15&ie=UTF8&iwloc=&output=embed">
+                    </iframe>
+                    <a href="https://maps.google.com/?q=Ganību+dambis+30N,+Rīga" target="_blank"
+                        class="absolute bottom-4 right-4 bg-brand-black text-white px-4 py-2 text-xs tracking-widest font-medium hover:bg-brand-accent transition-colors rounded-sm uppercase shadow-md opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 md:block hidden">
+                        {{ t.contacts_route }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-brand-black border-t border-gray-800 text-center py-8">
+        <div class="text-gray-500 text-xs tracking-widest uppercase font-light">
+            {{ t.footer_text }}
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+
+            const revealOnScroll = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            });
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+            
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileCloseBtn = document.getElementById('mobile-close-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            let isMenuOpen = false;
+
+            function toggleMenu() {
+                isMenuOpen = !isMenuOpen;
+                if (isMenuOpen) {
+                    mobileMenu.classList.remove('translate-x-full');
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling
+                    mobileMenuBackdrop.classList.remove('hidden');
+                    // Small delay to let display:block apply before opacity transition
+                    setTimeout(() => mobileMenuBackdrop.classList.remove('opacity-0'), 10);
+                } else {
+                    mobileMenu.classList.add('translate-x-full');
+                    document.body.style.overflow = '';
+                    mobileMenuBackdrop.classList.add('opacity-0');
+                    setTimeout(() => mobileMenuBackdrop.classList.add('hidden'), 300);
+                }
+            }
+
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', toggleMenu);
+            }
+            if (mobileCloseBtn) {
+                mobileCloseBtn.addEventListener('click', toggleMenu);
+            }
+            if (mobileMenuBackdrop) {
+                mobileMenuBackdrop.addEventListener('click', toggleMenu);
+            }
+            
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (isMenuOpen) toggleMenu();
+                });
+            });
+
+            // WhatsApp redirection logic
+            const waForm = document.getElementById('wa-form');
+            if (waForm) {
+                // Remove error styling when user starts typing/selecting
+                const inputs = waForm.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    input.addEventListener('input', function() {
+                        this.classList.remove('border-red-500', 'placeholder-red-500', 'text-red-500');
+                        // Restore default color for select
+                        if(this.tagName === 'SELECT' && this.value === "") {
+                            this.classList.add('text-gray-500');
+                        } else if (this.tagName === 'SELECT') {
+                            this.classList.remove('text-gray-500');
+                            this.classList.add('text-brand-dark');
+                        }
+                    });
+                });
+
+                waForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const nameInput = document.getElementById('wa-name');
+                    const phoneInput = document.getElementById('wa-phone');
+                    const serviceInput = document.getElementById('wa-service');
+                    
+                    let isValid = true;
+                    
+                    if (!nameInput.value.trim()) {
+                        nameInput.classList.add('border-red-500', 'placeholder-red-500');
+                        isValid = false;
+                    }
+                    if (!phoneInput.value.trim()) {
+                        phoneInput.classList.add('border-red-500', 'placeholder-red-500');
+                        isValid = false;
+                    }
+                    if (!serviceInput.value) {
+                        serviceInput.classList.add('border-red-500', 'text-red-500');
+                        isValid = false;
+                    }
+                    
+                    if (!isValid) {
+                        waForm.classList.add('animate-shake');
+                        setTimeout(() => waForm.classList.remove('animate-shake'), 400);
+                        return;
+                    }
+                    
+                    const name = nameInput.value.trim();
+                    const phone = phoneInput.value.trim();
+                    const service = serviceInput.options[serviceInput.selectedIndex].text;
+                    const template = document.getElementById('wa-template').value;
+                    
+                    let message = template
+                        .replace('{name}', name)
+                        .replace('{phone}', phone)
+                        .replace('{service}', service);
+                        
+                    const whatsappUrl = `https://wa.me/37125658546?text=${encodeURIComponent(message)}`;
+                    
+                    window.open(whatsappUrl, '_blank');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
