@@ -10,6 +10,11 @@ def index():
     # Redirect to default language (Russian)
     return redirect('/ru')
 
+@app.route('/ping')
+def ping():
+    # Легкий эндпоинт для поддержания активности (keep-alive)
+    return "OK", 200
+
 @app.route('/<lang>')
 def home(lang):
     if lang not in SUPPORTED_LANGUAGES:
